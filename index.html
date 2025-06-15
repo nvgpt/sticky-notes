@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>
+      Sticky Notes
+    </title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<style>
+	@import url('https://fonts.googleapis.com/css2?family=Handlee&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+	*{	margin:0;	padding:0;	box-sizing:border-box;	font-family:'Poppins', sans-serif;	}
+	body{	background-color:#2f363e;}
+	:root{--size:300px;}
+	.container{position:relative;width:100%;height:100vh;display:flex;justify-content:flex-start;align-items:flex-start;	flex-wrap:wrap;gap:50px;padding:50px;	}
+	.container .notes{display:flex;flex-wrap:wrap;gap:50px;justify-content:flex-start;align-items:flex-start;}
+	.container .notes .note{position:relative;width:var(--size);height:var(--size);background:yellow;padding:20px;box-shadow:0 15px 35px rgba(0,0,0,0.25);font-family: "Handlee", cursive;}
+	.container .notes .note:before{content:'Double click to remove this note';	position:absolute;bottom:0;width:100%;left:0;
+	background:rgba(0,0,0,0.15);display:flex;justify-content:center;align-items:center;font-size:0.85em;opacity:0;transition:0.5s;}
+	.container .notes .note:hover:before{opacity:1;}
+	#create{position:relative;height:var(--size);width:var(--size);background:rgba(255,255,255,0.15);display:flex;align-items:center;
+	justify-content:center;	font-size:6em;cursor:pointer;}
+	#create i{position:absolute;color:#fff;font-style:normal;}
+	.createBox{position:relative;z-index:1000;height:var(--size);width:var(--size);display:none;}
+	.createBox textarea{position:absolute;top:0;left:0;height:var(--size);width:var(--size);padding:20px;outline:none;font-size:0.2em;resize:none;}
+	.details h3{font-family:'Handlee', cursive;user-select:none;}
+	</style>
+   <head>
+   <body>
+   
+   <div class="container">
+     <div class="notes">
+	  <div id="create">
+	  <i class="fa-slod fa-plus" style=""></i>
+	  <div class="createBox">
+	   <div class="innerCreateBox">
+	    <textarea placeholder="write here..." id="userInput" maxlength="160"></textarea>
+	   </div>
+	  </div>
+	  </div>
+	  
+	 </div>
+   </div>
+   
+   
+   
+   </body>
+   <script>
+   let createBox = document.getElementsByClassName('createBox')[0];
+   let notes = document.getElementsByClassName('notes')[0];
+   let input = document.getElementById('userInput');
+   let i=0;  
+   createBox.addEventListener('keydown', content)
+   
+   
+   document.getElementById('create').addEventListener('click',function(){
+   createBox.style.display="block";
+   input.focus();
+   });
+   
+   function content(e){
+   if(e.keyCode == "13"){
+   divStyle(input.value);
+   input.value="";
+    createBox.style.display="none";
+   }
+   }
+   
+   function color(){
+   let randomColors=["#c2ff3d","#ff3de8","#3dc2ff","#04e022","#bc83e6","#ebb328","#d82f1d"];
+   if(i>randomColors.length - 1){
+    i=0;
+   }
+   return randomColors[i++];
+   }
+   
+   let Items=[];
+   function divStyle(text){
+     let div = document.createElement('div');
+	 div.className="note";
+	 div.innerHTML=`<div class="details">`+`<h3>`+text+`</h3></div>`;
+	 let newColor =color();
+	 Items =[...Items, {color:newColor, text:text}];
+	 
+	 div.addEventListener('dblclick',function(){
+	  div.remove();
+	  console.log(text, newColor)
+	  // Target object to remove
+			let target = { color:newColor, text: text };
+
+			// Find index of matching object
+			let index = Items.findIndex(
+				item => item.color === target.color && item.text === target.text
+			);
+
+			// If found, remove the item
+			if (index !== -1) {
+				Items.splice(index, 1);
+			}
+
+			console.log(Items);
+			localStorage.setItem('list', JSON.stringify(Items));
+	  
+	 });
+	 
+	 div.setAttribute('style','background:'+newColor+'');
+	 notes.appendChild(div);
+	 
+	 
+	console.log(Items)
+	 
+	 localStorage.setItem('list', JSON.stringify(Items));
+   }
+   
+   let storedDate = JSON.parse(localStorage.getItem('list'));
+   console.log(storedDate);
+   if(storedDate?.length>0){
+    for( let i=0;i<storedDate.length;i++){
+	  divStyle(storedDate[i].text);
+	}
+   }
+   </script>
+   </html>
