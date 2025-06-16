@@ -1,3 +1,3 @@
-export default function app(){
+export default function App(){
   return true;
 }
